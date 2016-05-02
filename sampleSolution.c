@@ -29,3 +29,33 @@ int maxProfit(int k, int* prices, int size)
     }
     return t[k][size-1];
 }
+
+
+#define MAX(a, b) (a)>(b)? (a):(b)
+int maxProfit(int k, int* prices, int size)
+{
+    if(size < 2)
+        return 0;
+   if(k > size/2) //when it's unlimited, it can be easily handled -> corner case;
+    {
+        int profit = 0;
+        for(int i=1; i < size; i++)
+            if(prices[i] > prices[i-1])
+                profit += prices[i]-prices[i-1];
+        return profit;
+    }
+    int *holds = (int*)malloc(sizeof(int)*k);
+    int *solds = (int*)malloc(sizeof(int)*k);
+    memset(solds, 0, sizeof(int)*k);
+    for(int i = 0; i < k; i++)
+        holds[i] = INT_MIN;
+    for(int i=0; i < size; i++)
+    {
+        for(int j = 0; j < k; j++)
+        {
+            holds[j] = MAX(holds[j], (j>0? solds[j-1]:0)-prices[i]);
+            solds[j] = MAX(solds[j], holds[j]+prices[i]);
+        }
+    }
+    return solds[k-1];
+}
